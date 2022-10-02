@@ -45,8 +45,8 @@ def build_driver():
         "User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
     headlessoptions.add_argument("lang=ko_KR")
 
-    # driver = webdriver.Chrome(service=Service(DRIVER_PATH), options=headlessoptions)
-    driver = webdriver.Chrome(service=Service(DRIVER_PATH))
+    driver = webdriver.Chrome(service=Service(DRIVER_PATH), options=headlessoptions)
+    #driver = webdriver.Chrome(service=Service(DRIVER_PATH))
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": """ Object.defineProperty(navigator, 'webdriver', { get: () => undefined }) """})  # 크롤링 방지 설정을 "undefined"로 변경.
     driver.get(url)
 
