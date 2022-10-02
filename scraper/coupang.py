@@ -15,16 +15,17 @@ from scraper.cp_metadata import IMG_SRC_CSS, HREF_CSS, PRODUCT_TITLE_CSS, PRICE_
 
 def main():
     global count
+
     print("In progress..")
     build_df()
     for count in range(len(keyword)):
         build_driver()
         scroll_range(0, 7000)
-        get_d_elements()
-        next_arrow_btn()
-        df_to_csv()
+        get_elements()
+        multi_pages()
+    df_to_csv()
     driver.quit()
-    print("Success")
+    print("Success!")
 
 
 def build_df():
@@ -34,6 +35,8 @@ def build_df():
 
 def build_driver():
     global driver
+    url = f"https://www.coupang.com/np/search?q={keyword[count]}&channel=user&component=&eventCategory=SRP&trcid=&traid=&sorter=scoreDesc&minPrice=&maxPrice=&priceRange=&filterType=&listSize=36&filter=&isPriceRange=false&brand=&offerCondition=&rating=0&page=1&rocketAll=false&searchIndexingToken=1=6&backgroundColor="
+
     headlessoptions = webdriver.ChromeOptions()
     headlessoptions.add_argument('headless')
     headlessoptions.add_argument('window-size=1920x1080')
@@ -45,7 +48,7 @@ def build_driver():
     # driver = webdriver.Chrome(service=Service(DRIVER_PATH), options=headlessoptions)
     driver = webdriver.Chrome(service=Service(DRIVER_PATH))
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": """ Object.defineProperty(navigator, 'webdriver', { get: () => undefined }) """})  # 크롤링 방지 설정을 "undefined"로 변경.
-    driver.get(f"https://www.coupang.com/np/search?q={keyword[count]}&channel=user&component=&eventCategory=SRP&trcid=&traid=&sorter=scoreDesc&minPrice=&maxPrice=&priceRange=&filterType=&listSize=36&filter=&isPriceRange=false&brand=&offerCondition=&rating=0&page=1&rocketAll=false&searchIndexingToken=1=6&backgroundColor=")
+    driver.get(url)
 
 
 def scroll_range(start_pixel, end_pixel):
@@ -54,7 +57,7 @@ def scroll_range(start_pixel, end_pixel):
         time.sleep(1.5)
 
 
-def get_d_elements():
+def get_elements():
     get_img_src = driver.find_elements(By.CSS_SELECTOR, IMG_SRC_CSS)
     get_href = driver.find_elements(By.CSS_SELECTOR, HREF_CSS)
     get_title = driver.find_elements(By.CSS_SELECTOR, PRODUCT_TITLE_CSS)
@@ -74,22 +77,29 @@ def get_d_elements():
 
 
 def next_arrow_btn():
-    for page in range(pages-1):
-        next_button = driver.find_element(By.CSS_SELECTOR, NEXT_ARROW_BTN_CSS)
-        next_button.click()
-        time.sleep(2)
+    next_button = driver.find_element(By.CSS_SELECTOR, NEXT_ARROW_BTN_CSS)
+    next_button.click()
+    time.sleep(2)
 
-        scroll_range(0, 7000)
-        get_d_elements()
+
+def multi_pages():
+    for page in range(pages - 1):
+        next_arrow_btn()
+        scroll_range(0, 5000)
+        get_elements()
 
 
 def df_to_csv():
     df = pd.DataFrame(
-        {"detected_date": df_detected_time, "img_src": df_img_src, "href": df_href, "product_title": df_title,
-         "price_value": df_price})
+        {"detected_date": df_detected_time,
+         "img_src": df_img_src,
+         "href": df_href,
+         "product_title": df_title,
+         "price_value": df_price}
+    )
     today = datetime.today().strftime("%Y%m%d")
     df.to_csv(f"coupang_{keyword}_{today}.csv", index=True, encoding='utf-8-sig')
-    print("File Saved")
+    print("File Saved.")
 
 
 if __name__ == "__main__":
