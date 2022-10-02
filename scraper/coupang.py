@@ -20,7 +20,7 @@ def main():
     build_df()
     for count in range(len(keyword)):
         build_driver()
-        scroll_range(0, 7000)
+        scroll_range(0, 12000)
         get_elements()
         multi_pages()
     df_to_csv()
@@ -35,8 +35,7 @@ def build_df():
 
 def build_driver():
     global driver
-    url = f"https://www.coupang.com/np/search?q={keyword[count]}&channel=user&component=&eventCategory=SRP&trcid=&traid=&sorter=scoreDesc&minPrice=&maxPrice=&priceRange=&filterType=&listSize=36&filter=&isPriceRange=false&brand=&offerCondition=&rating=0&page=1&rocketAll=false&searchIndexingToken=1=6&backgroundColor="
-
+    url = f"https://www.coupang.com/np/search?rocketAll=false&q={keyword[count]}&brand=&offerCondition=&filter=&availableDeliveryFilter=&filterType=&isPriceRange=false&priceRange=&minPrice=&maxPrice=&page=1&trcid=&traid=&filterSetByUser=true&channel=&backgroundColor=&component=&rating=0&sorter=latestAsc&listSize=72"
     headlessoptions = webdriver.ChromeOptions()
     headlessoptions.add_argument('headless')
     headlessoptions.add_argument('window-size=1920x1080')
@@ -52,9 +51,11 @@ def build_driver():
 
 
 def scroll_range(start_pixel, end_pixel):
-    for pixel in range(start_pixel, end_pixel, 1000):
+    #driver.execute_script("document.body.style.transform = 'scale(0.75)'")
+    time.sleep(2)
+    for pixel in range(start_pixel, end_pixel, 500):
         driver.execute_script(f"window.scrollTo(0, {pixel})")
-        time.sleep(1.5)
+        time.sleep(0.5)
 
 
 def get_elements():
@@ -79,13 +80,12 @@ def get_elements():
 def next_arrow_btn():
     next_button = driver.find_element(By.CSS_SELECTOR, NEXT_ARROW_BTN_CSS)
     next_button.click()
-    time.sleep(2)
 
 
 def multi_pages():
     for page in range(pages - 1):
         next_arrow_btn()
-        scroll_range(0, 7000)
+        scroll_range(0, 12000)
         get_elements()
 
 
