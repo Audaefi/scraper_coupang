@@ -85,7 +85,7 @@ def next_arrow_btn():
 def multi_pages():
     for page in range(pages - 1):
         next_arrow_btn()
-        scroll_range(0, 5000)
+        scroll_range(0, 7000)
         get_elements()
 
 
