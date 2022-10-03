@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 from scraper.cp_metadata import DRIVER_PATH
-from scraper.cp_metadata import IMG_SRC_CSS, HREF_CSS, PRODUCT_TITLE_CSS, PRICE_CSS, NEXT_ARROW_BTN_CSS
+from scraper.cp_metadata import IMG_SRC_CSS, HREF_CSS, PRODUCT_TITLE_CSS, PRICE_CSS
 
 
 # start_pixel = 1000 #int(input("Start_Pixel : "))
@@ -39,8 +39,8 @@ def build_df():
 
 def build_driver():
     global driver
-
     url = f"https://www.coupang.com/np/search?q={keyword[count]}&channel=user&component=&eventCategory=SRP&trcid=&traid=&sorter=latestAsc&minPrice=&maxPrice=&priceRange=&filterType=&listSize=72&filter=&isPriceRange=false&brand=&offerCondition=&rating=0&page={pageList[-1]}&rocketAll=false&searchIndexingToken=&backgroundColor="
+
     headlessoptions = webdriver.ChromeOptions()
     headlessoptions.add_argument('headless')
     headlessoptions.add_argument("window-size=1080x2560")
