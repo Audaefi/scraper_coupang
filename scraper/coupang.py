@@ -29,8 +29,8 @@ def main():
 
 
 def build_df():
-    global df_detected_time, df_img_src, df_href, df_title, df_price
-    df_detected_time, df_img_src, df_href, df_title, df_price = [], [], [], [], []
+    global df_detected_time, df_marketplace, df_img_src, df_href, df_title, df_price
+    df_detected_time, df_marketplace, df_img_src, df_href, df_title, df_price = [], [], [], [], [], []
 
 
 def build_driver():
@@ -44,14 +44,14 @@ def build_driver():
         "User-Agent:  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
     headlessoptions.add_argument("lang=ko_KR")
 
-    driver = webdriver.Chrome(service=Service(DRIVER_PATH), options=headlessoptions)
-    #driver = webdriver.Chrome(service=Service(DRIVER_PATH))
+    #driver = webdriver.Chrome(service=Service(DRIVER_PATH), options=headlessoptions)
+    driver = webdriver.Chrome(service=Service(DRIVER_PATH))
     driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": """ Object.defineProperty(navigator, 'webdriver', { get: () => undefined }) """})  # 크롤링 방지 설정을 "undefined"로 변경.
     driver.get(url)
 
 
 def scroll_range(start_pixel, end_pixel):
-    #driver.execute_script("document.body.style.transform = 'scale(0.75)'")
+    driver.execute_script("document.body.style.transform = 'scale(0.75)'")
     time.sleep(2)
     for pixel in range(start_pixel, end_pixel, 500):
         driver.execute_script(f"window.scrollTo(0, {pixel})")
@@ -71,6 +71,7 @@ def get_elements():
         # print(src, href, product_title.text, price_value.text, seller_info.text)
 
         df_detected_time.append(datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        df_marketplace.append("Coupang")
         df_img_src.append(src)
         df_href.append(href)
         df_title.append(product_title.text)
@@ -92,6 +93,7 @@ def multi_pages():
 def df_to_csv():
     df = pd.DataFrame(
         {"detected_date": df_detected_time,
+         "marketplace" : df_marketplace,
          "img_src": df_img_src,
          "href": df_href,
          "product_title": df_title,
